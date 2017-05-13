@@ -8,13 +8,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -32,7 +39,7 @@ public class UIThread extends Application implements Observer ,Initializable {
     public  TableView<Download> view;
     public TableColumn<Download,String> name;
     public TableColumn<Download, Double> Progress;
-
+    private final String downloadPath="/home/ps/DownloadManager/Downloads/";
 
 
     public static DownloadManager manager=DownloadManager.getInstance();
@@ -103,6 +110,7 @@ public class UIThread extends Application implements Observer ,Initializable {
     @Override
     public void notifyObserver(String message,int id) {
         System.out.println(message);
+        field.setText(" "+id+"th  DOWNLOAD COMPLETED.");
     }
 
     @Override
@@ -133,19 +141,30 @@ public class UIThread extends Application implements Observer ,Initializable {
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ObservableList<Download> alldownloads,selected;
+                ObservableList<Download> alldownloads;
                 alldownloads=view.getItems();
-                selected=view.getSelectionModel().getSelectedItems();
                 Download download=view.getSelectionModel().getSelectedItem();
                 int index=getSelecteditem();
                 downloads--;
                 manager.deleteDownload(index);
                 alldownloads.remove(download);
-                selected.forEach(alldownloads::remove);
             }
         });
-        menu.getItems().addAll(pause,resume,delete);
+        MenuItem fileOption=new MenuItem("Open in files");
+        fileOption.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    Runtime.getRuntime().exec("nautilus "+downloadPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        menu.getItems().addAll(pause,resume,delete,fileOption);
         view.setContextMenu(menu);
+
     }
 
 }

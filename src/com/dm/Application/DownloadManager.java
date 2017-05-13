@@ -44,7 +44,13 @@ public class DownloadManager{
         thread.start();
     }
     public void deleteDownload(int i){
+        System.out.println(i);
         Download download=getDownloads().get(i);
+        if(download.getStatus().equals(Download.STATE.STOP)){
+            threadmonitors.remove(i);
+            downloads.remove(i);
+            return;
+        }
         download.setState(Download.STATE.STOP);
     }
     private boolean validateUrl(String url){

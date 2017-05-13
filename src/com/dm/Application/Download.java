@@ -106,6 +106,7 @@ public class Download extends Task<Void>{
             }
         }
         System.out.println(this.ThreadName+":"+"Task Stopped.");
+        observer.notifyObserver("DOWNLOAD COMPELTE",id);
         //updateProgress(1,1);
         http.disconnect();
         accessFile.close();
@@ -153,6 +154,9 @@ public class Download extends Task<Void>{
 
     public void notifyObserver(String message,int id){
         observer.notifyObserver(message,id);
+    }
+    public STATE getStatus(){
+        return this.state;
     }
 
 }
